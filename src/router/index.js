@@ -14,6 +14,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'admin',
+      component: AdminView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/loja',
       name: 'home',
       component: HomeView
     },
@@ -54,7 +60,7 @@ const router = createRouter({
     },
     {
       path: '/admin',
-      name: 'admin',
+      name: 'admin-alt',
       component: AdminView,
       meta: { requiresAuth: true }
     },
