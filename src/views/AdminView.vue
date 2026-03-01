@@ -12,6 +12,9 @@
         <button @click="showAddModal = true" class="btn-primary">
           + Adicionar Produto
         </button>
+        <button @click="logout" class="btn-secondary">
+          🚪 Sair
+        </button>
       </div>
     </div>
 
@@ -406,7 +409,18 @@ function exportPDF() {
   doc.save(`bhumi-produtos-${new Date().toISOString().split('T')[0]}.pdf`)
 }
 
+function logout() {
+  sessionStorage.removeItem('admin-auth')
+  window.location.href = '/login'
+}
+
 onMounted(() => {
+  const isAuth = sessionStorage.getItem('admin-auth')
+  if (!isAuth) {
+    window.location.href = '/login'
+    return
+  }
+  
   const savedProducts = localStorage.getItem('bhumi-products')
   const savedCategories = localStorage.getItem('bhumi-categories')
   
@@ -691,6 +705,19 @@ th {
   border-radius: 4px;
 }
 
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
 .image-upload {
   display: flex;
   align-items: center;
@@ -727,23 +754,10 @@ th {
   margin-top: 0.5rem;
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
-}
-
 @media (max-width: 768px) {
   .admin-header {
     flex-direction: column;
-    gap: 1rem;
+    align-items: flex-start;
   }
   
   .filters {
