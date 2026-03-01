@@ -26,7 +26,7 @@ const password = ref('')
 const error = ref('')
 
 function handleLogin() {
-  const correctPassword = 'bhumi2026'
+  const correctPassword = '@AryaAvalokite2026'
   
   if (password.value === correctPassword) {
     sessionStorage.setItem('admin-auth', 'true')
