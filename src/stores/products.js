@@ -1,68 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { supabase } from '../supabase'
 
 export const useProductStore = defineStore('products', () => {
-  const products = ref([
-    {
-      id: 1,
-      name: 'Prata Ativa - Livro',
-      category: 'livros',
-      price: 89.90,
-      description: 'Livro Prata Ativa - Uma jornada pelo conhecimento.',
-      image: '/images/prata-ativa-capa.jpg',
-      stock: 'print-on-demand',
-      sizes: null
-    },
-    {
-      id: 2,
-      name: 'Camiseta Prata Ativa',
-      category: 'camisetas',
-      price: 79.90,
-      description: 'Camiseta oficial Prata Ativa - Algodão orgânico.',
-      image: '/images/camiseta-01.png',
-      stock: 'print-on-demand',
-      sizes: ['P', 'M', 'G', 'GG']
-    },
-    {
-      id: 3,
-      name: 'Poster Arte Digital',
-      category: 'posters',
-      price: 49.90,
-      description: 'Poster de arte digital - Impressão alta qualidade.',
-      image: '/images/poster-01.jpg',
-      stock: 'print-on-demand',
-      sizes: ['A4', 'A3', 'A2']
-    },
-    {
-      id: 4,
-      name: 'Caneca Arte Bhumi',
-      category: 'outros',
-      price: 39.90,
-      description: 'Caneca cerâmica com arte exclusiva.',
-      image: '/images/caneca-01.jpg',
-      stock: 'print-on-demand',
-      sizes: null
-    },
-    {
-      id: 5,
-      name: 'Acessório Artesanal - pulseira',
-      category: 'acessorios',
-      price: 29.90,
-      description: 'Pulseira artesanal feita à mão.',
-      image: '/images/pulseira-01.jpg',
-      stock: 'estoque',
-      sizes: ['Único']
-    }
-  ])
-
-  const categories = ref([
-    { id: 'todos', name: 'Todos', icon: '🏪' },
-    { id: 'livros', name: 'Livros', icon: '📚' },
-    { id: 'camisetas', name: 'Camisetas', icon: '👕' },
-    { id: 'posters', name: 'Posters', icon: '🖼️' },
-    { id: 'acessorios', name: 'Acessórios', icon: '💎' },
-    { id: 'outros', name: 'Outros', icon: '📦' }
-  ])
+  const products = ref([])
+  const categories = ref([])
+  const loading = ref(false)
 
   const getProductById = computed(() => {
     return (id) => products.value.find(p => p.id === parseInt(id))
@@ -75,16 +18,101 @@ export const useProductStore = defineStore('products', () => {
     }
   })
 
-  function addProduct(product) {
-    const newId = Math.max(...products.value.map(p => p.id)) + 1
-    products.value.push({ ...product, id: newId })
+  async function fetchProducts() {
+    loading.value = true
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('id', { ascending: false })
+    
+    if (data) {
+      products.value = data
+    }
+    loading.value = false
+  }
+
+  async function fetchCategories() {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .order('name')
+    
+    if (data) {
+      categories.value = data
+    }
+  }
+
+  async function addProduct(product) {
+    const { data, error } = await supabase
+      .from('products')
+      .insert([product])
+      .select()
+    
+    if (data && data[0]) {
+      products.value.unshift(data[0])
+    }
+  }
+
+  async function updateProduct(id, updates) {
+    const { data, error } = await supabase
+      .from('products')
+      .update(updates)
+      .eq('id', id)
+      .select()
+    
+    if (data && data[0]) {
+      const index = products.value.findIndex(p => p.id === id)
+      if (index !== -1) {
+        products.value[index] = data[0]
+      }
+    }
+  }
+
+  async function deleteProduct(id) {
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id)
+    
+    if (!error) {
+      products.value = products.value.filter(p => p.id !== id)
+    }
+  }
+
+  async function addCategory(category) {
+    const { data, error } = await supabase
+      .from('categories')
+      .insert([category])
+      .select()
+    
+    if (data && data[0]) {
+      categories.value.push(data[0])
+    }
+  }
+
+  async function deleteCategory(id) {
+    const { error } = await supabase
+      .from('categories')
+      .delete()
+      .eq('id', id)
+    
+    if (!error) {
+      categories.value = categories.value.filter(c => c.id !== id)
+    }
   }
 
   return {
     products,
     categories,
+    loading,
     getProductById,
     getProductsByCategory,
-    addProduct
+    fetchProducts,
+    fetchCategories,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+    addCategory,
+    deleteCategory
   }
 })

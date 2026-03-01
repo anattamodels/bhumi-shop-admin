@@ -281,10 +281,9 @@ function editProduct(product) {
   sizesInput.value = product.sizes ? product.sizes.join(', ') : ''
 }
 
-function deleteProduct(id) {
+async function deleteProduct(id) {
   if (confirm('Tem certeza que deseja excluir este produto?')) {
-    productStore.products = productStore.products.filter(p => p.id !== id)
-    saveToStorage()
+    await productStore.deleteProduct(id)
   }
 }
 
@@ -295,7 +294,7 @@ function closeModal() {
   sizesInput.value = ''
 }
 
-function saveProduct() {
+async function saveProduct() {
   const sizes = sizesInput.value ? sizesInput.value.split(',').map(s => s.trim()) : null
   
   const productData = {
@@ -305,47 +304,31 @@ function saveProduct() {
   }
   
   if (editingProduct.value) {
-    const index = productStore.products.findIndex(p => p.id === editingProduct.value.id)
-    if (index !== -1) {
-      productStore.products[index] = { ...editingProduct.value, ...productData }
-    }
+    await productStore.updateProduct(editingProduct.value.id, productData)
   } else {
-    const newId = Math.max(...productStore.products.map(p => p.id), 0) + 1
-    productStore.products.push({ ...productData, id: newId })
+    await productStore.addProduct(productData)
   }
   
-  saveToStorage()
   closeModal()
 }
 
-function addCategory() {
+async function addCategory() {
   if (!newCategory.value.trim()) return
   
   const id = newCategory.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   const icon = '📦'
   
   if (!categories.value.find(c => c.id === id)) {
-    productStore.categories.push({ id, name: newCategory.value, icon })
-    saveToStorage()
+    await productStore.addCategory({ id, name: newCategory.value, icon })
   }
   
   newCategory.value = ''
 }
 
-function deleteCategory(id) {
+async function deleteCategory(id) {
   if (confirm('Excluir esta categoria? Os produtos não serão excluídos.')) {
-    productStore.categories = productStore.categories.filter(c => c.id !== id)
-    saveToStorage()
+    await productStore.deleteCategory(id)
   }
-}
-
-function saveCategories() {
-  saveToStorage()
-}
-
-function saveToStorage() {
-  localStorage.setItem('bhumi-products', JSON.stringify(productStore.products))
-  localStorage.setItem('bhumi-categories', JSON.stringify(productStore.categories))
 }
 
 function exportCSV() {
@@ -414,22 +397,15 @@ function logout() {
   window.location.href = '/login'
 }
 
-onMounted(() => {
+onMounted(async () => {
   const isAuth = sessionStorage.getItem('admin-auth')
   if (!isAuth) {
     window.location.href = '/login'
     return
   }
   
-  const savedProducts = localStorage.getItem('bhumi-products')
-  const savedCategories = localStorage.getItem('bhumi-categories')
-  
-  if (savedProducts) {
-    productStore.products = JSON.parse(savedProducts)
-  }
-  if (savedCategories) {
-    productStore.categories = JSON.parse(savedCategories)
-  }
+  await productStore.fetchProducts()
+  await productStore.fetchCategories()
 })
 </script>
 
