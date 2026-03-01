@@ -23,12 +23,13 @@
       >
         <div class="product-image">
           <img 
-            v-if="product.image && product.image.startsWith('data:')" 
+            v-if="hasValidImage(product.image)" 
             :src="product.image" 
             :alt="product.name"
             class="product-img"
+            @error="handleImageError"
           >
-          <div v-else class="placeholder-image">{{ product.category }}</div>
+          <div v-else class="placeholder-image">{{ getCategoryInitial(product.category) }}</div>
           <span class="product-badge">{{ getCategoryName(product.category) }}</span>
         </div>
         <div class="product-info">
@@ -65,9 +66,24 @@ const filteredProducts = computed(() => {
   return productStore.getProductsByCategory(activeCategory.value)
 })
 
+function hasValidImage(image) {
+  return image && (image.startsWith('data:') || image.startsWith('http'))
+}
+
+function getCategoryInitial(categoryId) {
+  if (!categoryId) return 'P'
+  const cat = categories.value.find(c => c.id === categoryId)
+  return cat ? cat.name.charAt(0).toUpperCase() : categoryId.toString().charAt(0).toUpperCase()
+}
+
 function getCategoryName(categoryId) {
   const cat = categories.value.find(c => c.id === categoryId)
   return cat ? cat.name : categoryId
+}
+
+function handleImageError(event) {
+  event.target.style.display = 'none'
+  event.target.nextElementSibling.style.display = 'flex'
 }
 
 watch(() => route.query.categoria, (newCategory) => {

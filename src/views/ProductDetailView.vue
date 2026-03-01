@@ -4,12 +4,13 @@
       <div class="product-gallery">
         <div class="main-image">
           <img 
-            v-if="product.image && product.image.startsWith('data:')" 
+            v-if="hasValidImage(product.image)" 
             :src="product.image" 
             :alt="product.name"
             class="product-img"
+            @error="handleImageError"
           >
-          <div v-else class="placeholder-image">{{ product.category }}</div>
+          <div v-else class="placeholder-image">{{ getCategoryInitial(product.category) }}</div>
         </div>
       </div>
 
@@ -86,10 +87,25 @@ const product = computed(() => productStore.getProductById(route.params.id))
 const selectedSize = ref(null)
 const quantity = ref(1)
 
+function hasValidImage(image) {
+  return image && (image.startsWith('data:') || image.startsWith('http'))
+}
+
+function getCategoryInitial(categoryId) {
+  if (!categoryId) return 'P'
+  const cat = productStore.categories.find(c => c.id === categoryId)
+  return cat ? cat.name.charAt(0).toUpperCase() : categoryId.toString().charAt(0).toUpperCase()
+}
+
 function getCategoryName(categoryId) {
   const categories = productStore.categories
   const cat = categories.find(c => c.id === categoryId)
   return cat ? cat.name : categoryId
+}
+
+function handleImageError(event) {
+  event.target.style.display = 'none'
+  event.target.nextElementSibling.style.display = 'flex'
 }
 
 function addToCart() {

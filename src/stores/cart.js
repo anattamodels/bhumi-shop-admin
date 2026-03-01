@@ -1,9 +1,24 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+
+const CART_STORAGE_KEY = 'bhumi-cart'
+
+function loadCartFromStorage() {
+  try {
+    const saved = localStorage.getItem(CART_STORAGE_KEY)
+    return saved ? JSON.parse(saved) : []
+  } catch {
+    return []
+  }
+}
 
 export const useCartStore = defineStore('cart', () => {
-  const items = ref([])
+  const items = ref(loadCartFromStorage())
   const paymentMethod = ref('pix')
+
+  watch(items, (newItems) => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(newItems))
+  }, { deep: true })
 
   const totalItems = computed(() => {
     return items.value.reduce((sum, item) => sum + item.quantity, 0)
@@ -24,7 +39,9 @@ export const useCartStore = defineStore('cart', () => {
         name: product.name,
         price: product.price,
         image: product.image,
-        quantity: 1
+        category: product.category,
+        quantity: 1,
+        size: product.size || null
       })
     }
   }

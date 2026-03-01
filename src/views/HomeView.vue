@@ -42,7 +42,7 @@
           class="product-card card"
         >
           <div class="product-image">
-            <div class="placeholder-image">{{ product.category }}</div>
+            <div class="placeholder-image">{{ getCategoryInitial(product.category) }}</div>
           </div>
           <div class="product-info">
             <h3 class="product-name">{{ product.name }}</h3>
@@ -60,7 +60,7 @@
           Nossos projetos incluem Cyber Manju, Techno Sutra, Prata Ativa e muito mais.
         </p>
         <router-link to="/sobre" class="btn-secondary">
-         Saiba Mais
+        Saiba Mais
         </router-link>
       </div>
     </section>
@@ -86,13 +86,24 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useProductStore } from '../stores/products'
 
 const productStore = useProductStore()
 
 const categories = computed(() => productStore.categories)
 const featuredProducts = computed(() => productStore.products.slice(0, 4))
+
+function getCategoryInitial(categoryId) {
+  if (!categoryId) return 'P'
+  const cat = categories.value.find(c => c.id === categoryId)
+  return cat ? cat.name.charAt(0).toUpperCase() : categoryId.toString().charAt(0).toUpperCase()
+}
+
+onMounted(async () => {
+  await productStore.fetchCategories()
+  await productStore.fetchProducts()
+})
 </script>
 
 <style scoped>
@@ -196,14 +207,6 @@ const featuredProducts = computed(() => productStore.products.slice(0, 4))
   margin-top: 2rem;
 }
 
-.hero-decoration {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-}
-
 .glitch-box {
   width: 400px;
   height: 400px;
@@ -215,29 +218,6 @@ const featuredProducts = computed(() => productStore.products.slice(0, 4))
 .categories-preview {
   padding: 4rem 1rem;
   position: relative;
-  background: 
-    linear-gradient(180deg, 
-      rgba(10, 10, 10, 0.9) 0%, 
-      rgba(26, 26, 46, 0.8) 50%, 
-      rgba(10, 10, 10, 0.95) 100%
-    ),
-    url('/images/backgrounds/budha-bubble.png') no-repeat center center;
-  background-size: cover;
-}
-
-.categories-preview::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, 
-    rgba(10, 10, 10, 0.95) 0%, 
-    rgba(10, 10, 10, 0.7) 50%,
-    rgba(10, 10, 10, 0.95) 100%
-  );
-  pointer-events: none;
 }
 
 .categories-grid {
@@ -258,24 +238,6 @@ const featuredProducts = computed(() => productStore.products.slice(0, 4))
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.category-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, transparent 40%, rgba(123, 44, 191, 0.1) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.category-card:hover::before {
-  opacity: 1;
 }
 
 .category-card:hover {
@@ -297,28 +259,13 @@ const featuredProducts = computed(() => productStore.products.slice(0, 4))
 
 .featured-products {
   padding: 4rem 1rem;
-  background: 
-    linear-gradient(180deg, 
-      rgba(26, 26, 46, 0.92) 0%, 
-      rgba(18, 18, 31, 0.95) 100%
-    ),
-    url('/images/backgrounds/buddha-punk.jpg') no-repeat;
-  background-size: cover;
-  background-position: center;
-  position: relative;
 }
 
-.featured-products::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(ellipse at 0% 0%, rgba(123, 44, 191, 0.2) 0%, transparent 50%),
-    radial-gradient(ellipse at 100% 100%, rgba(0, 255, 65, 0.15) 0%, transparent 50%);
-  pointer-events: none;
+.section-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--accent-green);
 }
 
 .products-grid {
@@ -326,11 +273,6 @@ const featuredProducts = computed(() => productStore.products.slice(0, 4))
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
-}
-
-.product-card {
-  text-decoration: none;
-  color: inherit;
 }
 
 .product-image {
@@ -365,31 +307,6 @@ const featuredProducts = computed(() => productStore.products.slice(0, 4))
 .about-preview {
   padding: 4rem 1rem;
   text-align: center;
-  position: relative;
-  background: 
-    linear-gradient(180deg, 
-      rgba(10, 10, 10, 0.85) 0%, 
-      rgba(26, 26, 46, 0.7) 50%, 
-      rgba(10, 10, 10, 0.9) 100%
-    ),
-    url('/images/backgrounds/budha clean.png') no-repeat center center;
-  background-size: contain, 40% auto;
-  background-position: center;
-}
-
-.about-preview::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(180deg,
-    rgba(10, 10, 10, 0.8) 0%,
-    rgba(26, 26, 46, 0.6) 50%,
-    rgba(10, 10, 10, 0.85) 100%
-  );
-  pointer-events: none;
 }
 
 .about-content {
@@ -405,37 +322,6 @@ const featuredProducts = computed(() => productStore.products.slice(0, 4))
 
 .projects-banner {
   padding: 4rem 1rem;
-  background: 
-    linear-gradient(180deg, 
-      rgba(10, 10, 10, 0.8) 0%, 
-      rgba(26, 26, 46, 0.6) 50%, 
-      rgba(10, 10, 10, 0.9) 100%
-    ),
-    url('/images/backgrounds/prata-ativa-poster.png') no-repeat center center;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-.projects-banner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    linear-gradient(90deg, 
-      rgba(10, 10, 10, 0.9) 0%, 
-      rgba(123, 44, 191, 0.2) 50%, 
-      rgba(10, 10, 10, 0.9) 100%
-    );
-  pointer-events: none;
-}
-
-.projects-banner-content {
-  position: relative;
-  z-index: 1;
   text-align: center;
 }
 
@@ -481,6 +367,11 @@ const featuredProducts = computed(() => productStore.products.slice(0, 4))
   border-color: var(--accent-green);
   box-shadow: var(--shadow-glow);
   transform: translateY(-5px);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.1; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(1.05); }
 }
 
 @media (max-width: 768px) {

@@ -244,7 +244,7 @@ const filteredProducts = computed(() => {
   let result = products.value
   
   if (filterCategory.value) {
-    result = result.filter(p => p.category === filterCategory.value)
+    result = result.filter(p => p.category && p.category.toString() === filterCategory.value.toString())
   }
   
   if (searchQuery.value) {
