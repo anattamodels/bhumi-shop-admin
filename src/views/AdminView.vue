@@ -31,6 +31,9 @@
       >
         Categorias
       </button>
+      <router-link to="/pedidos" class="tab-btn">
+        📦 Pedidos
+      </router-link>
     </div>
 
     <div v-if="activeTab === 'products'" class="products-management">

@@ -8,6 +8,7 @@ import AboutView from '../views/AboutView.vue'
 import ConfigView from '../views/ConfigView.vue'
 import AdminView from '../views/AdminView.vue'
 import LoginView from '../views/LoginView.vue'
+import OrdersView from '../views/OrdersView.vue'
 
 function checkAuth() {
   const savedAuth = sessionStorage.getItem('admin-session')
@@ -73,6 +74,12 @@ const router = createRouter({
       path: '/admin',
       name: 'admin-alt',
       component: AdminView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/pedidos',
+      name: 'orders',
+      component: OrdersView,
       meta: { requiresAuth: true }
     },
     {
