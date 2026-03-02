@@ -437,6 +437,7 @@ onMounted(async () => {
 
 .page-title {
   font-size: 2rem;
+  color: white;
 }
 
 .admin-tabs {
