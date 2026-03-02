@@ -110,7 +110,7 @@ async function handleLogin() {
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #B8B8B8;
+  color: #00FF41;
 }
 
 .form-group input {
@@ -118,8 +118,13 @@ async function handleLogin() {
   padding: 0.75rem;
   background: #12121f;
   border: 1px solid #2a2a4a;
-  color: white;
+  color: #00FF41;
   border-radius: 4px;
+}
+
+.form-group input::placeholder {
+  color: #00FF41;
+  opacity: 0.6;
 }
 
 .form-group input:focus {
