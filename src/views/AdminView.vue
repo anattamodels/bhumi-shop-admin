@@ -460,7 +460,7 @@ onMounted(async () => {
 
 .tab-btn.active {
   background: var(--accent-purple);
-  color: white;
+  color: #00FF41;
 }
 
 .tab-btn:hover:not(.active) {

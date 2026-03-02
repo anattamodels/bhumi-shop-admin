@@ -136,7 +136,7 @@ async function handleLogin() {
   width: 100%;
   padding: 1rem;
   background: #7B2CBF;
-  color: white;
+  color: #00FF41;
   border: none;
   border-radius: 4px;
   cursor: pointer;

@@ -256,7 +256,7 @@ function resetConfig() {
 
 .btn-primary {
   background: var(--accent-purple);
-  color: white;
+  color: #00FF41;
   border: none;
 }
 

@@ -138,7 +138,7 @@ watch(() => route.query.categoria, (newCategory) => {
 .filter-btn.active {
   background: var(--accent-purple);
   border-color: var(--accent-purple);
-  color: white;
+  color: #00FF41;
 }
 
 .products-grid {
@@ -179,7 +179,7 @@ watch(() => route.query.categoria, (newCategory) => {
   top: 10px;
   right: 10px;
   background: var(--accent-purple);
-  color: white;
+  color: #00FF41;
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 600;
