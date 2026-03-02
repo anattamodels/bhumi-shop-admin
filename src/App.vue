@@ -11,13 +11,13 @@
 body {
   margin: 0;
   padding: 0;
-  background: #0a0a0a;
+  background: #001a00;
 }
 
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #1a1a2e;
-  --bg-card: #12121f;
+  --bg-primary: #001a00;
+  --bg-secondary: #002a00;
+  --bg-card: #003300;
   
   --accent-purple: #7B2CBF;
   --accent-purple-light: #9D4EDD;
@@ -26,9 +26,9 @@ body {
   --accent-green-dark: #00CC33;
   --accent-green-glow: rgba(0, 255, 65, 0.3);
   
-  --text-primary: #FFFFFF;
-  --text-secondary: #B8B8B8;
-  --text-muted: #6B6B6B;
+  --text-primary: #00FF41;
+  --text-secondary: #00FF41;
+  --text-muted: #00CC33;
   
   --border-color: #2a2a4a;
 }
