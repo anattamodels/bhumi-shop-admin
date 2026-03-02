@@ -9,6 +9,17 @@ import ConfigView from '../views/ConfigView.vue'
 import AdminView from '../views/AdminView.vue'
 import LoginView from '../views/LoginView.vue'
 
+function checkAuth() {
+  const savedAuth = sessionStorage.getItem('admin-session')
+  if (!savedAuth) return false
+  try {
+    const data = JSON.parse(savedAuth)
+    return !!(data && data.email)
+  } catch {
+    return false
+  }
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -69,6 +80,18 @@ const router = createRouter({
       redirect: '/'
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  
+  if (requiresAuth && !checkAuth()) {
+    next({ name: 'login', query: { redirect: to.fullPath } })
+  } else if (to.name === 'login' && checkAuth()) {
+    next({ name: 'admin' })
+  } else {
+    next()
+  }
 })
 
 export default router

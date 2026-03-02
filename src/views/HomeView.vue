@@ -189,6 +189,8 @@ onMounted(async () => {
   font-family: var(--font-display);
   margin-bottom: 1rem;
   letter-spacing: 0.2em;
+  color: #00FF41;
+  text-shadow: 0 0 10px rgba(0, 255, 65, 0.5), 0 0 20px rgba(0, 255, 65, 0.3);
 }
 
 .hero-title .accent {
@@ -198,9 +200,10 @@ onMounted(async () => {
 
 .hero-subtitle {
   font-size: 1.5rem;
-  color: var(--text-secondary);
+  color: #00FF41;
   margin-bottom: 2rem;
   font-family: var(--font-body);
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.3);
 }
 
 .hero-cta {
@@ -251,10 +254,11 @@ onMounted(async () => {
 }
 
 .category-name {
-  color: var(--text-primary);
+  color: #00FF41;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.3);
 }
 
 .featured-products {
@@ -296,6 +300,7 @@ onMounted(async () => {
 .product-name {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
+  color: #00FF41;
 }
 
 .product-price {
@@ -315,9 +320,10 @@ onMounted(async () => {
 }
 
 .about-content p {
-  color: var(--text-secondary);
+  color: #00FF41;
   margin-bottom: 2rem;
   font-size: 1.1rem;
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.2);
 }
 
 .projects-banner {
@@ -334,8 +340,9 @@ onMounted(async () => {
 
 .projects-banner-content p {
   font-size: 1.25rem;
-  color: var(--text-secondary);
+  color: #00FF41;
   margin-bottom: 2rem;
+  text-shadow: 0 0 5px rgba(0, 255, 65, 0.3);
 }
 
 .external-stores {

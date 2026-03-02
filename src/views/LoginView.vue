@@ -4,15 +4,26 @@
       <h1>🔐 Admin BhumiShop</h1>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
-          <label>Senha de Acesso</label>
+          <label>Email</label>
           <input 
-            v-model="password" 
-            type="password" 
-            placeholder="Digite a senha"
+            v-model="email" 
+            type="email" 
+            placeholder="admin@bhumi.com.br"
             required
           >
         </div>
-        <button type="submit" class="btn-primary">Entrar</button>
+        <div class="form-group">
+          <label>Senha</label>
+          <input 
+            v-model="password" 
+            type="password" 
+            placeholder="Digite sua senha"
+            required
+          >
+        </div>
+        <button type="submit" class="btn-primary" :disabled="loading">
+          {{ loading ? 'Entrando...' : 'Entrar' }}
+        </button>
         <p v-if="error" class="error-msg">{{ error }}</p>
       </form>
     </div>
@@ -21,18 +32,47 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { supabase } from '../supabase'
 
+const router = useRouter()
+const route = useRoute()
+
+const email = ref('')
 const password = ref('')
 const error = ref('')
+const loading = ref(false)
 
-function handleLogin() {
-  const correctPassword = '@AryaAvalokite2026'
-  
-  if (password.value === correctPassword) {
-    sessionStorage.setItem('admin-auth', 'true')
-    window.location.href = '/'
-  } else {
-    error.value = 'Senha incorreta'
+async function handleLogin() {
+  error.value = ''
+  loading.value = true
+
+  try {
+    const { data, error: rpcError } = await supabase.rpc(
+      'verify_admin_password',
+      { 
+        p_email: email.value.toLowerCase(), 
+        p_password: password.value 
+      }
+    )
+
+    if (rpcError) {
+      console.error('RPC Error:', rpcError)
+      throw new Error('Erro ao verificar credenciais')
+    }
+
+    if (!data || !data.valid) {
+      throw new Error(data?.error || 'Email ou senha inválidos')
+    }
+
+    sessionStorage.setItem('admin-session', JSON.stringify(data.admin))
+
+    const redirect = route.query.redirect || '/'
+    router.push(redirect)
+  } catch (e) {
+    error.value = e.message || 'Erro ao fazer login'
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -82,6 +122,11 @@ function handleLogin() {
   border-radius: 4px;
 }
 
+.form-group input:focus {
+  outline: none;
+  border-color: #7B2CBF;
+}
+
 .btn-primary {
   width: 100%;
   padding: 1rem;
@@ -91,10 +136,16 @@ function handleLogin() {
   border-radius: 4px;
   cursor: pointer;
   font-weight: 600;
+  transition: background 0.3s;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: #9D4EDD;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .error-msg {

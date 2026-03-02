@@ -393,12 +393,12 @@ function exportPDF() {
 }
 
 function logout() {
-  sessionStorage.removeItem('admin-auth')
+  sessionStorage.removeItem('admin-session')
   window.location.href = '/login'
 }
 
 onMounted(async () => {
-  const isAuth = sessionStorage.getItem('admin-auth')
+  const isAuth = sessionStorage.getItem('admin-session')
   if (!isAuth) {
     window.location.href = '/login'
     return
