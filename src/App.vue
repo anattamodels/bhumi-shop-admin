@@ -11,13 +11,13 @@
 body {
   margin: 0;
   padding: 0;
-  background: #001a00;
+  background: #23032b;
 }
 
 :root {
-  --bg-primary: #001a00;
-  --bg-secondary: #002a00;
-  --bg-card: #003300;
+  --bg-primary: #23032b;
+  --bg-secondary: #2d0f36;
+  --bg-card: #3d1a47;
   
   --accent-purple: #7B2CBF;
   --accent-purple-light: #9D4EDD;
