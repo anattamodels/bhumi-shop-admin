@@ -2,9 +2,17 @@
   <div class="orders-page">
     <div class="page-header">
       <h1 class="page-title">Pedidos</h1>
-      <button class="btn-primary" @click="orderStore.fetchOrders()">
-        🔄 Atualizar
-      </button>
+      <div class="header-actions">
+        <button class="btn-secondary" @click="exportCSV">
+          📊 Download CSV
+        </button>
+        <button class="btn-secondary" @click="exportPDF">
+          📄 Download PDF
+        </button>
+        <button class="btn-primary" @click="orderStore.fetchOrders()">
+          🔄 Atualizar
+        </button>
+      </div>
     </div>
 
     <div v-if="orderStore.loading" class="loading">
@@ -142,6 +150,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { jsPDF } from 'jspdf'
+import 'jspdf-autotable'
 import { useOrderStore } from '../stores/orders'
 
 const orderStore = useOrderStore()
@@ -210,6 +220,69 @@ async function updateStatus(orderId, newStatus) {
     alert('Erro ao atualizar: ' + error.message)
   }
 }
+
+function exportCSV() {
+  const orders = orderStore.orders
+  const headers = ['Nº Pedido', 'Data', 'Cliente', 'Email', 'Telefone', 'Total', 'Pagamento', 'Status']
+  const rows = orders.map(o => [
+    o.order_number,
+    formatDate(o.created_at),
+    o.customer_name,
+    o.customer_email,
+    o.customer_phone,
+    o.total,
+    getPaymentMethodLabel(o.payment_method),
+    getStatusLabel(o.status)
+  ])
+  
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+  ].join('\n')
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const link = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+  const date = new Date().toISOString().split('T')[0]
+  link.setAttribute('href', url)
+  link.setAttribute('download', `bhumi-pedidos-${date}.csv`)
+  link.style.visibility = 'hidden'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+function exportPDF() {
+  const { jsPDF } = window.jspdf
+  const doc = new jsPDF()
+  const date = new Date().toLocaleDateString('pt-BR')
+  
+  doc.setFontSize(18)
+  doc.text('BhumiShop - Relatório de Pedidos', 14, 22)
+  
+  doc.setFontSize(10)
+  doc.text(`Data: ${date}`, 14, 30)
+  doc.text(`Total de pedidos: ${orderStore.orders.length}`, 14, 36)
+  
+  const tableData = orderStore.orders.map(o => [
+    o.order_number,
+    formatDate(o.created_at),
+    o.customer_name,
+    `R$ ${formatPrice(o.total)}`,
+    getPaymentMethodLabel(o.payment_method),
+    getStatusLabel(o.status)
+  ])
+  
+  doc.autoTable({
+    head: [['Nº Pedido', 'Data', 'Cliente', 'Total', 'Pagamento', 'Status']],
+    body: tableData,
+    startY: 42,
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [123, 44, 191] }
+  })
+  
+  doc.save(`bhumi-pedidos-${new Date().toISOString().split('T')[0]}.pdf`)
+}
 </script>
 
 <style scoped>
@@ -223,6 +296,14 @@ async function updateStatus(orderId, newStatus) {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .page-title {
