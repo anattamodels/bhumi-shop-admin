@@ -100,7 +100,7 @@ O projeto usa as seguintes tabelas do Supabase:
 
 ### Login Admin
 - **URL:** `/login`
-- **Senha:** `@AryaAvalokite2026`
+- **Senha:** (configure via Supabase - sql/create-admins-table.sql)
 
 A autenticação usa sessionStorage para manter o estado de login.
 

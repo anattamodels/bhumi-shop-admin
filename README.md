@@ -94,7 +94,7 @@ VITE_SUPABASE_KEY=sua_chave_anon
 ### Credenciais de Acesso
 
 - **URL:** https://a-shop-2026.bhumisparshaschool.org/login
-- **Senha:** `@AryaAvalokite2026`
+- **Senha:** (configure via Supabase)
 
 ---
 
