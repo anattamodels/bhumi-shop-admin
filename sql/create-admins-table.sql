@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS admins (
 -- Habilitar RLS
 ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 
+-- Remover política existente se houver
+DROP POLICY IF EXISTS "Admins podem ser gerenciados" ON admins;
+
 -- Política: permite apenas operações via functions com verificação
 CREATE POLICY "Admins podem ser gerenciados" ON admins
   FOR ALL
