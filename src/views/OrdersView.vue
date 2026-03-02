@@ -253,6 +253,7 @@ async function updateStatus(orderId, newStatus) {
   padding: 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
 .orders-table th {
