@@ -227,7 +227,7 @@ async function updateStatus(orderId, newStatus) {
 
 .page-title {
   font-size: 2rem;
-  color: white;
+  color: var(--text-primary);
 }
 
 .loading, .error-message, .no-orders {
@@ -351,7 +351,7 @@ async function updateStatus(orderId, newStatus) {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  color: white;
+  color: var(--text-primary);
   cursor: pointer;
 }
 
@@ -393,7 +393,7 @@ async function updateStatus(orderId, newStatus) {
 .close-btn {
   background: none;
   border: none;
-  color: white;
+  color: var(--text-primary);
   font-size: 1.5rem;
   cursor: pointer;
 }
