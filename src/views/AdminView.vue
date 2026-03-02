@@ -505,6 +505,7 @@ th, td {
   padding: 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
+  color: #00FF41;
 }
 
 th {
